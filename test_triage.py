@@ -27,24 +27,64 @@ class MinHeap:
 
     def insert(self, value: float) -> None:
         """Append `value`, then call _sift_up to restore the heap property."""
-        # TODO
-        raise NotImplementedError
+        # add the new patient to the end of the list
+        self._data.append(value)
+        # the new patient is in the last spot of the list
+        last_index = len(self._data) - 1
+        # move it up until it is in the right place
+        self._sift_up(last_index)
 
     def _sift_up(self, index: int) -> None:
         """
         Recursive. Perform at most one swap, then recurse toward the
         correct resting position. Do not use a while loop.
         """
-        # TODO
-        raise NotImplementedError
+        # base case: index 0 is the root, so there is no parent to compare with
+        if index == 0:
+            return
+
+        # find the parent of this spot
+        parent_index = (index - 1) // 2
+
+        # if this value is smaller than its parent, they need to switch
+        if self._data[index] < self._data[parent_index]:
+            # swap the value with its parent
+            temp = self._data[index]
+            self._data[index] = self._data[parent_index]
+            self._data[parent_index] = temp
+            # keep going up from the parent spot
+            self._sift_up(parent_index)
+        # if it is not smaller, it is already in the right place so we stop
 
     def _sift_down(self, index: int) -> None:
         """
         Recursive. Perform at most one swap, then recurse toward the
         correct resting position. Do not use a while loop.
         """
-        # TODO
-        raise NotImplementedError
+        # find the children of this spot
+        left_index = 2 * index + 1
+        right_index = 2 * index + 2
+        size = len(self._data)
+
+        # base case: no left child means no children at all, so stop
+        if left_index >= size:
+            return
+
+        # start by guessing the left child is the smaller child
+        smallest = left_index
+        # if there is a right child and it is even smaller, use it instead
+        if right_index < size and self._data[right_index] < self._data[left_index]:
+            smallest = right_index
+
+        # if that child is smaller than this value, they need to switch
+        if self._data[smallest] < self._data[index]:
+            # swap the value with that child
+            temp = self._data[index]
+            self._data[index] = self._data[smallest]
+            self._data[smallest] = temp
+            # keep going down from the child spot
+            self._sift_down(smallest)
+        # if not, it is already in the right place so we stop
 
     def extract_min(self) -> float:
         """
@@ -52,8 +92,22 @@ class MinHeap:
         Move the last element to the root and call _sift_down.
         Correctly handle a heap with 0 or 1 elements.
         """
-        # TODO
-        raise NotImplementedError
+        # if the heap is empty there is nothing to take out
+        if len(self._data) == 0:
+            raise IndexError("extract_min from an empty heap")
+
+        # if there is only one patient, just take it out
+        if len(self._data) == 1:
+            return self._data.pop()
+
+        # the smallest value is always at the front (the root)
+        smallest_value = self._data[0]
+        # take the last value off the end and put it at the root
+        last_value = self._data.pop()
+        self._data[0] = last_value
+        # move the new root down until it is in the right place
+        self._sift_down(0)
+        return smallest_value
 
 
 # ============================== VERIFICATION SUITE ==============================
